@@ -1,12 +1,24 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ReadPDF from '../components/ReadPDF.vue';
+import Comments from '../components/comments.vue'
 ---
 
 <Layout title="Welcome to Astro.">
 	<main>
 		<h1>Aideaman <span class="text-gradient">PDF</span></h1>
-		<ReadPDF client:load />
+		<div class="grid grid-cols-12">
+			<div class="col-span-3">
+				pdf一覧
+			</div>
+			<div class="col-span-6" >
+				<ReadPDF client:load />
+			</div>
+			<div class="col-span-3" >
+				<Comments client:load />
+			</div>
+		</div>
+		
 	</main>
 </Layout>
 
@@ -14,8 +26,6 @@ import ReadPDF from '../components/ReadPDF.vue';
 	main {
 		margin: auto;
 		padding: 1rem;
-		width: 800px;
-		max-width: calc(100% - 2rem);
 		color: white;
 		font-size: 20px;
 		line-height: 1.6;

@@ -1,4 +1,4 @@
-   <template>
+    <template>
     <div>
       <canvas v-for="(canvas, index) in canvases" :key="index" :ref="canvas.ref" v-if="pdfLoaded"></canvas>
     </div>
