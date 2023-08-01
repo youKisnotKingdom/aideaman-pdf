@@ -6,12 +6,11 @@ import Comments from '../components/comments.vue'
 
 <Layout title="Welcome to Astro.">
 	<main>
-		<h1>Aideaman <span class="text-gradient">PDF</span></h1>
 		<div class="grid grid-cols-12">
-			<div class="col-span-3">
+			<!-- <div class="col-span-3">
 				pdf一覧
-			</div>
-			<div class="col-span-6" >
+			</div> -->
+			<div class="col-span-9" >
 				<ReadPDF client:load />
 			</div>
 			<div class="col-span-3" >
@@ -26,6 +25,7 @@ import Comments from '../components/comments.vue'
 	main {
 		margin: auto;
 		padding: 1rem;
+		margin-top: 80px;
 		color: white;
 		font-size: 20px;
 		line-height: 1.6;
@@ -46,11 +46,4 @@ import Comments from '../components/comments.vue'
 		text-align: center;
 		margin-bottom: 1em;
 	}
-	.text-gradient {
-		background-image: var(--accent-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 400%;
-		background-position: 0%;
-    }
 </style>

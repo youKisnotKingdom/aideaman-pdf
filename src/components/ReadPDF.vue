@@ -1,6 +1,6 @@
     <template>
     <div>
-      <canvas v-for="(canvas, index) in canvases" :key="index" :ref="canvas.ref" v-if="pdfLoaded"></canvas>
+      <canvas v-for="(canvas, index) in canvases" class="mb-10" :key="index" :ref="canvas.ref" v-if="pdfLoaded" :style="{width:`${canvasStyleWidth}px`, height:`${canvasStyleHeight}px`}"></canvas>
     </div>
   </template>
   
@@ -16,6 +16,8 @@
         pdf: null,
         canvases: [],
         pdfLoaded: false,
+        canvasStyleHeight:false,
+        canvasStyleWidth:false,
       };
     },
     mounted() {
@@ -35,15 +37,19 @@
     methods: {
       renderPage(num) {
         toRaw(this.pdf).getPage(num).then((page) => {
-          const viewport = page.getViewport({ scale: 1.0 });
+          const scale = 2.0
+          const scaledViewport = page.getViewport({scale: scale})
           const canvas = this.$refs[`pdfCanvas${num}`][0];
           const context = canvas.getContext('2d');
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
+          canvas.height = scaledViewport.height * 2
+          canvas.width = scaledViewport.width * 2
+          this.canvasStyleHeight = scaledViewport.height
+          this.canvasStyleWidth = scaledViewport.width
   
           const renderContext = {
             canvasContext: context,
-            viewport: viewport,
+            viewport: scaledViewport,
+            transform: [scale, 0, 0, scale, 0, 0]
           };
   
           page.render(renderContext);
