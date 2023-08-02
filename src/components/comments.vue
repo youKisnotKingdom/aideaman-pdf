@@ -39,7 +39,7 @@
 <script>
 import { initFlowbite, Drawer } from 'flowbite'
 import { query, getDocs, Timestamp, setDoc, collection, doc, orderBy } from 'firebase/firestore'
-import db from "../firebase/firestore"
+import { firestore } from "../firebase/firestore"
 
 export default {
     data() {
@@ -59,7 +59,7 @@ export default {
     },
     methods: {
         async getComments() {
-            const q = query(collection(db, "comments"), orderBy("time"))
+            const q = query(collection(firestore, "comments"), orderBy("time"))
             const qs = await getDocs(q)
             this.comments = qs.docs.map((item) => {
                 const data = item.data()
@@ -78,7 +78,7 @@ export default {
                     comment: this.inputComment
                 }
                 this.comments.push(data)
-                await setDoc(doc(collection(db, "comments")), data)
+                await setDoc(doc(collection(firestore, "comments")), data)
             }
             this.inputComment = ""
         },
