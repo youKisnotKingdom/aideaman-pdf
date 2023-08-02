@@ -23,9 +23,9 @@
         <ol class="relative border-l border-gray-200 dark:border-gray-700">
             <li class="mb-10 ml-4" v-for="content of comments">
                 <div class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
-                <time class="mb-1 text-sm font-normal leading-none text-gray-600 dark:text-gray-500">March 2022</time>
-                <h3 class="text-lg font-semibold text-white-900 dark:text-white">〇〇さんのコメント</h3>
-                <p class="text-base font-normal text-gray-700 dark:text-gray-400">{{ content }}</p>
+                <time class="mb-1 text-sm font-normal leading-none text-gray-600 dark:text-gray-500">{{ content.time }}</time>
+                <h3 class="text-lg font-semibold text-white-900 dark:text-white">{{content.userName}}さんのコメント</h3>
+                <p class="text-base font-normal text-gray-700 dark:text-gray-400">{{ content.comment }}</p>
             </li>
         </ol>
             <div class="relative">
@@ -38,6 +38,8 @@
 
 <script>
 import { initFlowbite, Drawer } from 'flowbite'
+import { query, getDocs, Timestamp, setDoc, collection, doc, orderBy } from 'firebase/firestore'
+import db from "../firebase/firestore"
 
 export default {
     data() {
@@ -48,17 +50,40 @@ export default {
             drawer: null,
         }
     },
+    created() {
+        this.getComments()
+    },
     mounted() {
         initFlowbite(),
         this.initDrawer()
     },
     methods: {
-        addComment() {
-            if (this.inputComment != "") this.comments.push(this.inputComment)
+        async getComments() {
+            const q = query(collection(db, "comments"), orderBy("time"))
+            const qs = await getDocs(q)
+            this.comments = qs.docs.map((item) => {
+                const data = item.data()
+                data.time = data.time.toDate().toLocaleDateString("ja-JP")
+                return data
+            })
+        },
+        async addComment() {
+            console.log("touch")
+            if (this.inputComment != "") {
+                const nowTime = Timestamp.now()
+                const  userName = "userName"
+                const data = {
+                    time: nowTime,
+                    userName: userName,
+                    comment: this.inputComment
+                }
+                this.comments.push(data)
+                await setDoc(doc(collection(db, "comments")), data)
+            }
             this.inputComment = ""
         },
         initDrawer() {
-                        // set the drawer menu element
+                // set the drawer menu element
                 const $targetEl = this.$refs.drawer
 
                 // options with default values
@@ -70,13 +95,13 @@ export default {
                 edgeOffset: '',
                 backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30',
                 onHide: () => {
-                    console.log('drawer is hidden');
+                    //console.log('drawer is hidden');
                 },
                 onShow: () => {
-                    console.log('drawer is shown');
+                    //console.log('drawer is shown');
                 },
                 onToggle: () => {
-                    console.log('drawer has been toggled');
+                    //console.log('drawer has been toggled');
                 }
             };
             this.drawer = new Drawer($targetEl, options)
