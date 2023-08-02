@@ -13,10 +13,12 @@ import Comments from '../components/comments.vue'
 			<div class="col-span-9" >
 				<ReadPDF client:load />
 			</div>
-			<div class="col-span-3" >
-				<Comments client:load />
 			</div>
 		</div>
+		<div class="grid grid-cols-12">
+			<Comments client:load />
+		</div>
+		
 		
 	</main>
 </Layout>

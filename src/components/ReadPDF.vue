@@ -1,6 +1,6 @@
     <template>
     <div>
-      <canvas v-for="(canvas, index) in canvases" class="mb-10" :key="index" :ref="canvas.ref" v-if="pdfLoaded" :style="{width:`${canvasStyleWidth}px`, height:`${canvasStyleHeight}px`}"></canvas>
+      <canvas v-for="(canvas, index) in canvases" class="mb-10 ml-3" :key="index" :ref="canvas.ref" v-if="pdfLoaded" :style="{width:`${canvasStyleWidth}px`, height:`${canvasStyleHeight}px`}"></canvas>
     </div>
   </template>
   
