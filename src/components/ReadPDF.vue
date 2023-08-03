@@ -1,6 +1,10 @@
     <template>
-    <div>
+    <div v-if="!nonePDF">
       <canvas v-for="(canvas, index) in canvases" class="mb-10 ml-3" :key="index" :ref="canvas.ref" v-if="pdfLoaded" :style="{width:`${canvasStyleWidth}px`, height:`${canvasStyleHeight}px`}"></canvas>
+    </div>
+    <div v-else>
+      <h1>PDFファイルを選択してください。
+      </h1>
     </div>
   </template>
   
@@ -11,19 +15,17 @@
   import { toRaw } from 'vue'
 
   import { firestorage } from '../firebase/firestore'
-  import { ref, getDownloadURL, listAll } from 'firebase/storage'
+  import { ref, getDownloadURL } from 'firebase/storage'
 
-  const listRef = ref(firestorage,`${import.meta.env.PUBLIC_FOLDER_PATH}/archive`)
-
-  const pdfPath = `${import.meta.env.PUBLIC_FOLDER_PATH}/archive/Retentive Network.pdf`
-  console.log(pdfPath)
-  const gsReference = ref(firestorage, pdfPath)
+  import { useStore } from '@nanostores/vue'
+  import { filePath } from '../store/filePath';
 
   export default {
     data() {
       return {
         pdf: null,
         pdfFile:null,
+        nonePDF:false,
         canvases: [],
         pdfLoaded: false,
         canvasStyleHeight:false,
@@ -31,7 +33,8 @@
       };
     },
     created() {
-      this.getPDF()
+      this.getPDF(),
+      console.log(useStore(filePath).value)
     },
     watch: {
       pdfFile(loadedPDF) {
@@ -41,16 +44,15 @@
       }
     },
     async mounted() {
-      //const pdfName = this.pdfFile ? this.pdfFile : 'test.pdf'
-      console.log(this.pdfFile)
-      this.getList()
     },
     methods: {
       async getPDF() {
         try {
+          const pdfPath = `${import.meta.env.PUBLIC_FOLDER_PATH}/archive/${useStore(filePath).value}`
+          const gsReference = ref(firestorage, pdfPath)
           this.pdfFile = await getDownloadURL(gsReference)
-          console.log("file", this.pdfFile)
         } catch(err) {
+          this.nonePDF = true
           console.log(err)
         }
        
@@ -89,23 +91,6 @@
           page.render(renderContext);
         });
       },
-      getList() {
-        listAll(listRef)
-          .then((res) => {
-            res.prefixes.forEach((folderRef) => {
-              // All the prefixes under listRef.
-              // You may call listAll() recursively on them.
-              console.log(folderRef)
-            });
-            res.items.forEach((itemRef) => {
-              // All the items under listRef.
-              console.log(itemRef._location.path_)
-            });
-          }).catch((error) => {
-            // Uh-oh, an error occurred!
-            console.log(error)
-          });
-        }
     },
   };
   </script>

@@ -1,0 +1,12 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Folder from "../components/Folder.vue";
+import UploadPDF from "../components/UploadPDF.vue";
+---
+
+<Layout title="manage">
+    <main>
+        <UploadPDF client:load />
+        <Folder client:load /> 
+    </main>
+</Layout>
