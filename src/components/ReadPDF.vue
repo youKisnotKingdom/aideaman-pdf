@@ -32,10 +32,6 @@
         canvasStyleWidth:false,
       };
     },
-    created() {
-      this.getPDF(),
-      console.log(useStore(filePath).value)
-    },
     watch: {
       pdfFile(loadedPDF) {
         if (loadedPDF != null) {
@@ -43,7 +39,8 @@
         }
       }
     },
-    async mounted() {
+    mounted() {
+      this.getPDF()
     },
     methods: {
       async getPDF() {

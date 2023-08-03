@@ -41,6 +41,9 @@
 
 <script>
 import { filePath } from '../store/filePath'
+
+import { getDocs, query, collection, orderBy } from 'firebase/firestore'
+import { firestore } from '../firebase/firestore'
  
 export default {
     data() {
@@ -54,7 +57,7 @@ export default {
         }
     },
     created() {
-        //this.getFolder()
+        this.getFolder()
     },
     methods: {
         async getFolder() {
@@ -62,7 +65,7 @@ export default {
             const qs = await getDocs(q)
             this.files = qs.docs.map((item) => {
                 const file = item.data();
-                file.uploadTime = file.uploadTime.toDate().localeDateString('ja-JP')
+                file.uploadTime = file.uploadTime.toDate().toLocaleDateString('ja-JP')
                 return file
             })
         },

@@ -41,6 +41,9 @@ import { initFlowbite, Drawer } from 'flowbite'
 import { query, getDocs, Timestamp, setDoc, collection, doc, orderBy } from 'firebase/firestore'
 import { firestore } from "../firebase/firestore"
 
+import { useStore } from '@nanostores/vue'
+import { filePath } from '../store/filePath'
+
 export default {
     data() {
         return {
@@ -51,21 +54,25 @@ export default {
         }
     },
     created() {
-        this.getComments()
+        console.log(useStore(filePath).value)
+        //this.getComments()
     },
     mounted() {
         initFlowbite(),
+        this.getComments()
         this.initDrawer()
     },
     methods: {
         async getComments() {
-            const q = query(collection(firestore, "comments"), orderBy("time"))
+            const collectionRef = collection(firestore, "comments", "paper", useStore(filePath).value.toString())
+            const q = query(collectionRef)
             const qs = await getDocs(q)
             this.comments = qs.docs.map((item) => {
                 const data = item.data()
                 data.time = data.time.toDate().toLocaleDateString("ja-JP")
                 return data
             })
+            console.log(this.comments)
         },
         async addComment() {
             console.log("touch")
@@ -77,8 +84,9 @@ export default {
                     userName: userName,
                     comment: this.inputComment
                 }
+                data.time = data.time.toDate().toLocaleDateString()
                 this.comments.push(data)
-                await setDoc(doc(collection(firestore, "comments")), data)
+                await setDoc(doc(collection(firestore, "comments", "paper", useStore(filePath).value)), data)
             }
             this.inputComment = ""
         },
