@@ -1,7 +1,7 @@
 <template>
 <!-- drawer init and toggle -->
 <div class="text-center">
-    <button @click="showDrawer" class="fixed bottom-20 right-20 inline-flex items-center justify-center p-0.5 overflow-hidden group bg-gradient-to-br from-green-400 to-blue-600 rounded-full group-hover:from-green-400 group-hover:to-blue-600 focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800" type="button"><!-- data-drawer-target="drawer-right-example" data-drawer-body-scrolling="true" data-drawer-backdrop="true" data-drawer-show="drawer-right-example" data-drawer-placement="right" aria-controls="drawer-right-example"> -->
+    <button @click="showDrawer" :disabled="pushable" class="fixed bottom-20 right-20 inline-flex items-center justify-center p-0.5 overflow-hidden group bg-gradient-to-br from-green-400 to-blue-600 rounded-full group-hover:from-green-400 group-hover:to-blue-600 focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800" type="button"><!-- data-drawer-target="drawer-right-example" data-drawer-body-scrolling="true" data-drawer-backdrop="true" data-drawer-show="drawer-right-example" data-drawer-placement="right" aria-controls="drawer-right-example"> -->
     <span class="relative p-3 transition-all ease-in duration-75 bg-white rounded-full dark:bg-gray-900 group-hover:bg-opacity-0">
         <svg class="w-10 h-10 hover:fill-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" ><path d="M80-80v-740q0-24 18-42t42-18h680q24 0 42 18t18 42v520q0 24-18 42t-42 18H240L80-80Zm134-220h606v-520H140v600l74-80Zm-74 0v-520 520Z"/></svg>
     </span>
@@ -49,6 +49,7 @@ export default {
         return {
             //comments: [],
             comments: ["この論文は、LLMについてのもので…", "この計算式の意味ってわかりますか？", "この部分は結構重要ポイントだと思います。"],
+            pushable: true,
             inputComment:"",
             drawer: null,
         }
@@ -58,13 +59,17 @@ export default {
         //this.getComments()
     },
     mounted() {
+        document.addEventListener('userAuth', (event) => {
+            if (event.detail) this.pushable = false
+
+        })
         initFlowbite(),
         this.getComments()
         this.initDrawer()
     },
     methods: {
         async getComments() {
-            const collectionRef = collection(firestore, "comments", "paper", useStore(filePath).value.toString())
+            const collectionRef = await collection(firestore, "comments", "paper", useStore(filePath).value)
             const q = query(collectionRef)
             const qs = await getDocs(q)
             this.comments = qs.docs.map((item) => {
@@ -72,10 +77,8 @@ export default {
                 data.time = data.time.toDate().toLocaleDateString("ja-JP")
                 return data
             })
-            console.log(this.comments)
         },
         async addComment() {
-            console.log("touch")
             if (this.inputComment != "") {
                 const nowTime = Timestamp.now()
                 const  userName = "userName"
@@ -84,9 +87,9 @@ export default {
                     userName: userName,
                     comment: this.inputComment
                 }
+                await setDoc(doc(collection(firestore, "comments", "paper", useStore(filePath).value)), data)
                 data.time = data.time.toDate().toLocaleDateString()
                 this.comments.push(data)
-                await setDoc(doc(collection(firestore, "comments", "paper", useStore(filePath).value)), data)
             }
             this.inputComment = ""
         },

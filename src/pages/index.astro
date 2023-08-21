@@ -2,7 +2,6 @@
 import Layout from '../layouts/Layout.astro';
 import ReadPDF from '../components/ReadPDF.vue';
 import Comments from '../components/Comments.vue';
-import UploadPDF from '../components/UploadPDF.vue';
 ---
 
 <Layout title="Welcome to Astro.">
@@ -23,6 +22,18 @@ import UploadPDF from '../components/UploadPDF.vue';
 		
 	</main>
 </Layout>
+
+<script>
+	import { auth } from '../firebase/firestore'
+	import { onAuthStateChanged } from 'firebase/auth'
+	onAuthStateChanged(auth, (user) => {
+		if (!user) window.location.href = "/login"
+		else {
+			const event = new CustomEvent('userAuth', { detail: true });
+		    document.dispatchEvent(event);
+		}
+	})
+</script>
 
 <style>
 	main {

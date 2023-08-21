@@ -1,6 +1,6 @@
 <template>
 
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+<div v-if="status" class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <table class="w-full text-sm text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -53,11 +53,17 @@ export default {
                 {fileName: "isana.pdf", uploadTime:"2023/08/01", uploadedBy: "user1"},
                 {fileName: "Discharge summary hospital course summarisation of in patient Electronic Health Record text with.pdf", uploadTime:"2023/08/03", uploadedBy: "user13"},
                 {fileName: "Retentive Network.pdf", uploadTime:"2023/08/03", uploadedBy: "user2"},
-            ]
+            ],
+            status: false,
         }
     },
     created() {
         this.getFolder()
+    },
+    mounted() {
+        document.addEventListener('userAuth', (event) => {
+        this.status = event.detail;
+      })
     },
     methods: {
         async getFolder() {

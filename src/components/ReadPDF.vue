@@ -21,8 +21,12 @@
   import { filePath } from '../store/filePath';
 
   export default {
+    // props: {
+    //   status: String
+    // },
     data() {
       return {
+        isLogined: null,
         pdf: null,
         pdfFile:null,
         nonePDF:false,
@@ -35,24 +39,32 @@
     watch: {
       pdfFile(loadedPDF) {
         if (loadedPDF != null) {
-          this.setDocument(loadedPDF)
+          if (this.status) this.setDocument(loadedPDF)
         }
-      }
+      },
+    },
+    created() {
+      this.getPDF()
     },
     mounted() {
-      this.getPDF()
+      document.addEventListener('userAuth', (event) => {
+        this.status = event.detail;
+        console.log(this.status)
+      })
     },
     methods: {
       async getPDF() {
-        try {
-          const pdfPath = `${import.meta.env.PUBLIC_FOLDER_PATH}/archive/${useStore(filePath).value}`
-          const gsReference = ref(firestorage, pdfPath)
-          this.pdfFile = await getDownloadURL(gsReference)
-        } catch(err) {
-          this.nonePDF = true
-          console.log(err)
+        const fileName = useStore(filePath).value;
+        if (fileName) {
+          try {
+            const pdfPath = `${import.meta.env.PUBLIC_FOLDER_PATH}/archive/${fileName}`
+            const gsReference = ref(firestorage, pdfPath)
+            this.pdfFile = await getDownloadURL(gsReference)
+          } catch(err) {
+            this.nonePDF = true
+            console.log(err)
+          }
         }
-       
       },
       setDocument() {
         getDocument(this.pdfFile).promise.then((pdf) => {
