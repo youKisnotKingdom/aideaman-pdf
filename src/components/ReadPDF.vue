@@ -55,6 +55,7 @@
     methods: {
       async getPDF() {
         const fileName = useStore(filePath).value;
+        console.log(fileName)
         if (fileName) {
           try {
             const pdfPath = `${import.meta.env.PUBLIC_FOLDER_PATH}/archive/${fileName}`
@@ -64,6 +65,8 @@
             this.nonePDF = true
             console.log(err)
           }
+        } else {
+          
         }
       },
       setDocument() {

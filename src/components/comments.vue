@@ -69,14 +69,18 @@ export default {
     },
     methods: {
         async getComments() {
-            const collectionRef = await collection(firestore, "comments", "paper", useStore(filePath).value)
-            const q = query(collectionRef)
-            const qs = await getDocs(q)
-            this.comments = qs.docs.map((item) => {
-                const data = item.data()
-                data.time = data.time.toDate().toLocaleDateString("ja-JP")
-                return data
-            })
+            const fileName = useStore(filePath).value;
+            if (fileName) {
+                const collectionRef = await collection(firestore, "comments", "paper", useStore(filePath).value)
+                const q = query(collectionRef)
+                const qs = await getDocs(q)
+                this.comments = qs.docs.map((item) => {
+                    const data = item.data()
+                    data.time = data.time.toDate().toLocaleDateString("ja-JP")
+                    return data
+                })
+            }
+            
         },
         async addComment() {
             if (this.inputComment != "") {

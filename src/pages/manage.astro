@@ -6,8 +6,14 @@ import UploadPDF from "../components/UploadPDF.vue";
 
 <Layout title="manage">
     <main>
-        <UploadPDF client:load />
-        <Folder client:load /> 
+		<div class="flex-wrap justify-center">
+			<div class="w-4/5 m-10">
+				<UploadPDF client:only="vue" />
+			</div>
+			<div>
+				<Folder client:load /> 
+			</div>
+		</div>
     </main>
 </Layout>
 
