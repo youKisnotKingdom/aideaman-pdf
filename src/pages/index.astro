@@ -1,44 +1,31 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import ReadPDF from '../components/ReadPDF.vue';
-import Comments from '../components/Comments.vue';
+import Layout from "../layouts/Layout.astro";
+import Folder from "../components/Folder.vue";
+import UploadPDF from "../components/UploadPDF.vue";
 ---
 
-<Layout title="Welcome to Astro.">
-	<main>
-		<div class="grid grid-cols-12">
-			<!-- <div class="col-span-3">
-				pdf一覧
-			</div> -->
-			<div class="col-span-9" >
-				<ReadPDF client:load />
+<Layout title="manage">
+    <main>
+		<h1 class="text-white">PDFファイルをアップロード</h1>
+		<div class="flex justify-center">
+			<div class="w-1/3 m-10 ">
+				<UploadPDF client:load />
 			</div>
 		</div>
-		<div class="grid grid-cols-12">
-			<Comments client:load />
+		<h1 class="text-white">PDFファイルを管理</h1>
+		<div class="flex justify-center">
+			<div class="w-4/5">
+				<Folder client:load /> 
+			</div>
 		</div>
-		
-		
-	</main>
+    </main>
 </Layout>
-
-<script>
-	import { auth } from '../firebase/firestore'
-	import { onAuthStateChanged } from 'firebase/auth'
-	onAuthStateChanged(auth, (user) => {
-		if (!user) window.location.href = "/login"
-		else {
-			const event = new CustomEvent('userAuth', { detail: true });
-		    document.dispatchEvent(event);
-		}
-	})
-</script>
 
 <style>
 	main {
 		margin: auto;
-		padding: 1rem;
-		margin-top: 80px;
+		padding: 0.5rem;
+		margin-top: 50px;
 		color: white;
 		font-size: 20px;
 		line-height: 1.6;
